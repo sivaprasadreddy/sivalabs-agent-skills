@@ -1,26 +1,61 @@
 #!/usr/bin/env bash
 
-set -e
+set -Eeuo pipefail
 
-URL="https://github.com/sivaprasadreddy/spring-boot-skill/archive/refs/heads/main.zip"
-ZIP_FILE="spring-boot-skill.zip"
+#
+# Configuration (avoid magic strings)
+#
+REPO_OWNER="sivaprasadreddy"
+REPO_NAME="spring-boot-skill"
+DEFAULT_BRANCH="main"
 
-TARGET_DIR="${PWD}/.agents/skills"
+ARCHIVE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/heads/${DEFAULT_BRANCH}.zip"
+ZIP_FILE="${REPO_NAME}.zip"
 
-# Create target directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
+ROOT_DIR="${PWD}"
+AGENTS_DIR="${ROOT_DIR}/.agents"
+SKILLS_DIR="${AGENTS_DIR}/skills"
+EXTRACTED_DIR_NAME="${REPO_NAME}-${DEFAULT_BRANCH}"
+INSTALL_DIR="${SKILLS_DIR}/${REPO_NAME}"
 
-# Download the zip
-curl -L "$URL" -o "$ZIP_FILE"
+# Files in installed directory that we don't need to keep
+PRUNE_FILES=( ".gitignore" "install.sh" "LICENSE" "README.md" )
 
-# Extract into target directory
-unzip -q "$ZIP_FILE" -d "$TARGET_DIR"
+# Symlinks to create pointing to .agents
+SYMLINKS=( ".claude" ".codex" ".gemini" )
 
-# Remove the zip file
-rm "$ZIP_FILE"
+#
+# Prepare directories
+#
+mkdir -p "${SKILLS_DIR}"
 
-ln -s ${PWD}/.agents ${PWD}/.claude
-ln -s ${PWD}/.agents ${PWD}/.codex
-ln -s ${PWD}/.agents ${PWD}/.gemini
+#
+# Download archive
+#
+echo "Downloading ${ARCHIVE_URL} -> ${ZIP_FILE}"
+curl -fsSL --retry 3 "${ARCHIVE_URL}" -o "${ZIP_FILE}"
 
-echo "Installed spring-boot-skill successfully."
+#
+# Extract and install
+#
+#echo "Extracting ${ZIP_FILE} to ${SKILLS_DIR}"
+unzip -q -o "${ZIP_FILE}" -d "${SKILLS_DIR}"
+
+# Ensure idempotency: remove existing install dir if present
+rm -rf "${INSTALL_DIR}"
+mv "${SKILLS_DIR}/${EXTRACTED_DIR_NAME}" "${INSTALL_DIR}"
+
+# Prune unnecessary files (ignore if missing)
+for f in "${PRUNE_FILES[@]}"; do
+  [ -e "${INSTALL_DIR}/${f}" ] && rm -f "${INSTALL_DIR}/${f}"
+done
+
+# Optionally remove the downloaded zip
+rm -f "${ZIP_FILE}"
+
+# Create helpful symlinks to .agents
+for link in "${SYMLINKS[@]}"; do
+  ln -sfn "${AGENTS_DIR}" "${ROOT_DIR}/${link}"
+done
+
+echo "Installed ${REPO_NAME} successfully into ${INSTALL_DIR}."
