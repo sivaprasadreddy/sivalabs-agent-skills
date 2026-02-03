@@ -4,6 +4,10 @@ A collection of skills/guidelines for building Spring Boot applications.
 
 ## Usage
 
+```shell
+$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/spring-boot-skill/refs/heads/main/install.sh | bash
+```
+
 ### Claude Code
 
 To use globally copy `spring-boot-skill` directory into `~/.claude/skills/` directory.
