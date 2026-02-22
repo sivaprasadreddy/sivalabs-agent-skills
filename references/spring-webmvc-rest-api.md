@@ -1,10 +1,9 @@
-# Spring WebMVC REST APIs 
+# Spring WebMVC REST APIs
 
 The following are key principles to follow while creating REST APIs using Spring Web MVC:
 
 - Use **converters** to bind `@PathVariable` and `@RequestParam` to Value Objects
 - Use **Jackson** for `@RequestBody` binding to Request Objects with Value Object properties
-- Use `@JsonUnwrapped` to map flattened JSON to nested objects
 - Validate with `@Valid` annotation
 - Return appropriate HTTP status codes
 - Delegate to services for business logic execution
@@ -17,132 +16,67 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StringToEventCodeConverter implements Converter<String, EventCode> {
+public class StringToUserIdConverter implements Converter<String, UserId> {
 
     @Override
-    public EventCode convert(String source) {
-        return new EventCode(source);
+    public UserId convert(String source) {
+        return new UserId(source);
     }
 }
 ```
 
-This allows Spring MVC to automatically convert path variables like `/{eventCode}` from String to `EventCode`:
+This allows Spring MVC to automatically convert path variables like `/{userId}` from String to `UserId`:
 
 ```java
-@GetMapping("/{eventCode}")
-ResponseEntity<EventVM> findEventByCode(@PathVariable EventCode eventCode) {
-    // eventCode is already an EventCode object, not a String
+@GetMapping("/{userId}")
+ResponseEntity<UserVM> findUserById(@PathVariable UserId userId) {
+    // userId is already an UserId object, not a String
 }
 ```
 
 ### Binding primitives to Request Bodies with Value Objects
 Use `@JsonValue` and `@JsonCreator` annotations to bind primitives to Request Bodies with Value Objects.
 
-**EventCode Value Object:**
+**UserId Value Object:**
 
 ```java
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.validation.constraints.NotBlank;
 
-public record EventCode(
+public record UserId(
         @JsonValue 
-        @NotBlank(message = "Event code cannot be null or empty")
-        String code
+        @NotBlank(message = "User id cannot be null or empty")
+        String id
 ) {
     @JsonCreator
-    public EventCode {
-        if (code == null || code.trim().isEmpty()) {
-            throw new IllegalArgumentException("Event code cannot be null");
+    public UserId {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("User id cannot be null");
         }
     }
 
-    public static EventCode of(String code) {
-        return new EventCode(code);
+    public static UserId of(String id) {
+        return new UserId(id);
     }
 }
 ```
 
-**CreateEventRequest Request Payload:**
+**CreateUserRequest Request Payload:**
 
 ```java
-record CreateEventRequest(
-        @Valid EventCode code
+record CreateUserRequest(
+        @Valid UserId userId
         // ... other properties
 ) {
 }
 ```
 
-Spring MVC will automatically bind the `code` property from the JSON payload to `EventCode` object.
+Spring MVC will automatically bind the `userId` property from the JSON payload to `UserId` object.
 
 ```json
 {
-  "code": "ABSHDJFSD",
-  "property-1": "value-1",
-  "property-n": "value-n"
-}
-```
-
-### Binding flattened JSON to Nested Objects
-Use `@JsonUnwrapped` and `@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)` annotations to map flattened JSON to nested objects.
-
-```java
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
-public record EventDetails(
-        @NotBlank(message = "Title is required")
-        @Size(min = 3, max = 200, message = "Title must be between 3 and 200 characters")
-        String title,
-
-        @NotBlank(message = "Description is required")
-        @Size(max = 10000, message = "Description cannot exceed 10000 characters")
-        String description,
-
-        @Size(max = 500, message = "Image URL cannot exceed 500 characters")
-        @Pattern(regexp = "^https?://.*", message = "Image URL must be a valid HTTP/HTTPS URL")
-        String imageUrl) {
-
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public EventDetails(
-            @JsonProperty("title") String title,
-            @JsonProperty("description") String description,
-            @JsonProperty("imageUrl") String imageUrl
-    ) {
-        this.title = AssertUtil.requireNotNull(title, "title cannot be null");
-        this.description = AssertUtil.requireNotNull(description, "description cannot be null");
-        this.imageUrl = imageUrl;
-    }
-
-    public static EventDetails of(String title, String description, String imageUrl) {
-        return new EventDetails(title, description, imageUrl);
-    }
-}
-```
-
-**CreateEventRequest Request Payload:**
-
-```java
-record CreateEventRequest(
-        @Valid EventCode code,
-        @JsonUnwrapped @Valid EventDetails details
-        // ... other properties
-) {
-}
-```
-
-Spring MVC will automatically bind the `title`, `description` and `imageUrl` property values 
-from the JSON payload to `EventDetails` object.
-
-```json
-{
-  "code": "ABSHDJFSD",
-  "title": "Spring Boot Workshop",
-  "description": "Learn Spring Boot best practices",
-  "imageUrl": "https://example.com/image.jpg",
+  "userId": "ABSHDJFSD",
   "property-1": "value-1",
   "property-n": "value-n"
 }
@@ -163,8 +97,8 @@ Create a class `GlobalExceptionHandler` by following the following key principle
 ### Example: GlobalExceptionHandler
 
 ```java
-import dev.sivalabs.meetup4j.shared.DomainException;
-import dev.sivalabs.meetup4j.shared.ResourceNotFoundException;
+import dev.sivalabs.onepoint.shared.DomainException;
+import dev.sivalabs.onepoint.shared.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -204,15 +138,17 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Validation Error");
         problemDetail.setProperty("errors", errors);
+        problemDetail.setProperty("timestamp", Instant.now());
         return ResponseEntity.status(UNPROCESSABLE_CONTENT).body(problemDetail);
     }
 
     @ExceptionHandler(DomainException.class)
     public ProblemDetail handle(DomainException e) {
-        log.info("Bad request", e);
+        log.warn("Bad request", e);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
         problemDetail.setTitle("Bad Request");
         problemDetail.setProperty("errors", List.of(e.getMessage()));
+        problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
 
@@ -222,6 +158,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
         problemDetail.setTitle("Resource Not Found");
         problemDetail.setProperty("errors", List.of(e.getMessage()));
+        problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
 
@@ -269,9 +206,9 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   "type": "about:blank",
   "title": "Bad Request",
   "status": 400,
-  "detail": "Cannot cancel events that have already started",
+  "detail": "Cannot update user details",
   "errors": [
-    "Cannot cancel events that have already started"
+    "Email is already exist"
   ]
 }
 ```
@@ -282,9 +219,9 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   "type": "about:blank",
   "title": "Resource Not Found",
   "status": 404,
-  "detail": "Event not found with code: ABC123",
+  "detail": "User not found with id: ABC123",
   "errors": [
-    "Event not found with code: ABC123"
+    "User not found with id: ABC123"
   ]
 }
 ```
