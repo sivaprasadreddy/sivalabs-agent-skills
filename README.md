@@ -8,30 +8,33 @@ A collection of skills/guidelines for building applications using AI Agents.
 ## Usage
 
 ```shell
-$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/sivalabs-agent-skills/refs/heads/main/install.sh | bash
+$ npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills
+
+# Installing specific skill
+$ npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills --skill spring-boot
 ```
 
-Install skills at project-level or user-level.
+## Manual Installation
+Copy the desired skills (`skills/spring-boot`, etc) at project-level (`project/.claude/skills/spring-boot`) or user-level (`~/.claude/skills/spring-boot`).
 
 - Claude Code: `project/.claude/skills/` or `~/.claude/skills/`
 - Codex: `project/.codex/skills/` or `~/.codex/skills/`
 - Gemini: `project/.gemini/skills/` or `~/.gemini/skills/`
 - Cursor: `project/.cursor/skills/` or `~/.cursor/skills/`
 
-### Agent Skills with symlinks
-
-Instead of copying the same skills for multiple agents, you can create symlinks to the skills directory as follows:
-
-Copy the skills in `{project_root}/.agents/skills/` directory.
-
 ```shell
-cd {project_root}
-ln -s {project_root}/.agents {project_root}/.claude
-ln -s {project_root}/.agents {project_root}/.codex
-ln -s {project_root}/.agents {project_root}/.gemini
-```
+# Install at project-level for all supporting agents
+$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/sivalabs-agent-skills/refs/heads/main/install.sh | bash
 
-This way, all agents will use the same skills, and any updates to the `.agents/skills` will be reflected for all agents.
+# Install at project-level for selected agents
+$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/sivalabs-agent-skills/refs/heads/main/install.sh | bash -s -- --agent claude --agent codex
+
+# Install at user-level for all supporting agents
+$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/sivalabs-agent-skills/refs/heads/main/install.sh | bash -s -- --user
+
+# Install at user-level for selected agents
+$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/sivalabs-agent-skills/refs/heads/main/install.sh | bash -s -- --user --agent claude --agent codex
+```
 
 ## References
 * https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
