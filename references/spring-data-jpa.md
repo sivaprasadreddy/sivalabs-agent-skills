@@ -1,6 +1,16 @@
 # Spring Data JPA
 
-The following are key principles to follow while using Spring Data JPA:
+- [Key principles](#key-principles)
+- [IdentityGenerator (TSID)](#identitygenerator)
+- [Value Object for Primary Key](#value-object-for-primary-key)
+- [JPA Auditing](#use-jpa-auditing-support)
+- [AssertUtil](#assertutil-class-to-validate-input-parameters)
+- [Example entity](#example-jpa-entity-class)
+- [Example repository](#example-userrepository)
+
+## Key principles
+
+Follow these principles when using Spring Data JPA:
 
 - Create `BaseEntity` for audit fields(`createdAt`, `updatedAt`) and extend all entities from it
 - Create a Value Object to represent the primary key and use `@EmbeddedId` annotation

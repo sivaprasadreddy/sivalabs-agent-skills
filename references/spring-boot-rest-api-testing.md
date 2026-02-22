@@ -1,6 +1,13 @@
 # Spring Boot REST API Testing
 
-The following are key principles to follow while testing Spring Boot WebMVC based REST APIs:
+- [Key principles](#key-principles)
+- [TestcontainersConfig](#testcontainersconfigjava)
+- [BaseIT](#baseitjava)
+- [Sample controller test](#sample-restcontroller-test)
+
+## Key principles
+
+Follow these principles when testing Spring Boot Web MVC REST APIs:
 
 - Use `RestTestClient` to test API endpoints
 - Use Testcontainers to setup test dependencies like databases, message brokers, etc

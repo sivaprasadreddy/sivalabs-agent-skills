@@ -1,5 +1,6 @@
 # Spring Modulith
-The following are key principles to follow while using Spring Modulith:
+
+Follow these principles when using Spring Modulith:
 
 - Add the following BOM with the latest version of Spring Modulith
     ```xml

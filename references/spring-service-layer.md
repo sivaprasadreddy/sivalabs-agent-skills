@@ -1,6 +1,13 @@
 # Spring Business Logic Layer
 
-The following are key principles to follow while creating Spring Service layer components:
+- [Key principles](#key-principles)
+- [DomainEvent](#domaineventjava)
+- [SpringEventPublisher](#springeventpublisher)
+- [Example UserService](#example-userservice)
+
+## Key principles
+
+Follow these principles when creating Spring Service layer components:
 
 - Create service classes that perform a Unit Of Work
 - Use `@Transactional` for all write operations

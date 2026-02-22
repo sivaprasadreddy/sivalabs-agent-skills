@@ -1,6 +1,14 @@
 # Spring WebMVC REST APIs
 
-The following are key principles to follow while creating REST APIs using Spring Web MVC:
+- [Key principles](#key-principles)
+- [Converter for PathVariable/RequestParam](#converter-for-pathvariablerequestparam-binding)
+- [Value objects in request body](#binding-primitives-to-request-bodies-with-value-objects)
+- [Global Exception Handler](#global-exception-handler)
+- [Error response examples](#error-response-examples)
+
+## Key principles
+
+Follow these principles when creating REST APIs with Spring Web MVC:
 
 - Use **converters** to bind `@PathVariable` and `@RequestParam` to Value Objects
 - Use **Jackson** for `@RequestBody` binding to Request Objects with Value Object properties
@@ -164,7 +172,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     ProblemDetail handleUnexpected(Exception e) {
-        logger.error("Unexpected exception occurred", e);
+        log.error("Unexpected exception occurred", e);
 
         // Don't expose internal details in production
         String message = "An unexpected error occurred";

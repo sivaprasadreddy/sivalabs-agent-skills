@@ -1,30 +1,36 @@
 ---
 name: spring-boot-skill
 description: >
-  Build Spring Boot 4.x applications following best practices.
-  Covers how to use Spring MVC, Spring Data, Spring Modulith, Spring Security, and Spring Boot Testing.
+  Build Spring Boot 4.x applications following best practices. Use when developing or modifying
+  Spring Boot apps that use Spring MVC, Spring Data JPA, Spring Modulith, Spring Security, or
+  Spring Boot testing including package structure, REST APIs, entities/repositories, service layer,
+  modular monoliths, and REST API tests.
 ---
 
 # Spring Boot Skill
-Develop Spring Boot applications using the following best practices.
 
-## Spring Boot Package Structure
-Follow a **domain-driven, modular architecture** where packages are organized by **business modules** 
-rather than technical layers.
+Apply the practices below when developing Spring Boot applications. Read the linked reference only when working on that area.
 
-Read `references/code-organization.md` for more details on organizing code in Spring Boot projects.
+## Package structure
+
+Read [references/code-organization.md](references/code-organization.md) for domain-driven, module-based package layout and naming conventions.
 
 ## Spring Data JPA
-While using Spring Data JPA, implement the Repository layer by following the guidelines in `references/spring-data-jpa.md`.
 
-## Business/Service Logic Implementation
-Implement the business logic in service layer follow the guidelines in `references/spring-service-layer.md`.
+Implement the repository and entity layer using [references/spring-data-jpa.md](references/spring-data-jpa.md).
+
+## Service layer
+
+Implement business logic in the service layer using [references/spring-service-layer.md](references/spring-service-layer.md).
 
 ## Spring MVC REST APIs
-Implement REST APIs using Spring MVC by following the guidelines in `references/spring-webmvc-rest-api.md`.
+
+Implement REST APIs with Spring MVC using [references/spring-webmvc-rest-api.md](references/spring-webmvc-rest-api.md).
 
 ## Spring Modulith
-Build Modular Monoliths using Spring Modulith by following the guidelines in `references/spring-modulith.md`.
 
-## Spring Boot REST API Testing
-Test Spring Boot REST APIs by following the guidelines in `references/spring-boot-rest-api-testing.md`.
+Build a modular monolith with Spring Modulith using [references/spring-modulith.md](references/spring-modulith.md).
+
+## REST API testing
+
+Test Spring Boot REST APIs using [references/spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md).

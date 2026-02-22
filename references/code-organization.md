@@ -1,7 +1,6 @@
 # Spring Boot Application Package Structure
 
-Follow a **domain-driven, modular architecture** where packages are organized by
-**business modules** rather than technical layers.
+Use a **domain-driven, modular layout**: organize packages by **business modules**, not by technical layers.
 
 ### Recommended Example Package Structure
 
