@@ -2,34 +2,18 @@
 
 set -Eeuo pipefail
 
-#
-# Configuration (avoid magic strings)
-#
-REPO_OWNER="sivaprasadreddy"
-REPO_NAME="spring-boot-skill"
-DEFAULT_BRANCH="main"
-
-ARCHIVE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/heads/${DEFAULT_BRANCH}.zip"
-ZIP_FILE="${REPO_NAME}.zip"
-
-# Files in installed directory that we don't need to keep
-PRUNE_FILES=( ".gitignore" "install.sh" "LICENSE" "README.md" )
-
 # Supported AI agents
-AI_AGENTS=( "claude" "codex" "gemini" )
+AI_AGENTS=( "claude" "codex" "gemini" "cursor" )
 
 # Default installation level
 INSTALL_LEVEL="project"  # or "user"
 SELECTED_AGENTS=()
 
-#
-# Usage/Help
-#
 usage() {
   cat <<EOF
 Usage: $0 [OPTIONS]
 
-Install spring-boot-skill for AI agents (Claude, Codex, Gemini, Cursor).
+Install sivalabs-agent-skills for AI agents (Claude, Codex, Gemini, Cursor).
 
 OPTIONS:
   --project           Install at project level (default)
@@ -44,15 +28,11 @@ EXAMPLES:
   $0 --agent claude                     # Install for Claude only at project level
   $0 --agent claude --agent codex       # Install for Claude and Codex at project level
   $0 --user --agent gemini              # Install for Gemini only at user level
-  $0 --project --agent all              # Install for all agents at project level
 
 EOF
   exit 0
 }
 
-#
-# Parse command-line arguments
-#
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --project)
@@ -69,7 +49,7 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       if [[ "$2" == "all" ]]; then
-        SELECTED_AGENTS=( "${AI_AGENTS[@]}" "cursor" )
+        SELECTED_AGENTS=( "${AI_AGENTS[@]}" )
       elif [[ "$2" =~ ^(claude|codex|gemini|cursor)$ ]]; then
         SELECTED_AGENTS+=( "$2" )
       else
@@ -90,38 +70,23 @@ done
 
 # Default to all agents if none specified
 if [[ ${#SELECTED_AGENTS[@]} -eq 0 ]]; then
-  SELECTED_AGENTS=( "${AI_AGENTS[@]}" "cursor" )
+  SELECTED_AGENTS=( "${AI_AGENTS[@]}" )
 fi
 
 # Remove duplicates from SELECTED_AGENTS
 SELECTED_AGENTS=( $(printf "%s\n" "${SELECTED_AGENTS[@]}" | sort -u) )
 
-#
-# Download archive
-#
-echo "Downloading ${ARCHIVE_URL} -> ${ZIP_FILE}"
-curl -fsSL --retry 3 "${ARCHIVE_URL}" -o "${ZIP_FILE}"
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE_SKILLS_DIR="${SCRIPT_DIR}/skills"
 
-#
-# Extract to temp directory
-#
-TEMP_DIR=$(mktemp -d)
-trap "rm -rf '${TEMP_DIR}' '${ZIP_FILE}'" EXIT
+# Verify source skills directory exists
+if [[ ! -d "${SOURCE_SKILLS_DIR}" ]]; then
+  echo "Error: skills directory not found at ${SOURCE_SKILLS_DIR}"
+  exit 1
+fi
 
-echo "Extracting ${ZIP_FILE}..."
-unzip -q -o "${ZIP_FILE}" -d "${TEMP_DIR}"
-
-EXTRACTED_DIR_NAME="${REPO_NAME}-${DEFAULT_BRANCH}"
-SOURCE_DIR="${TEMP_DIR}/${EXTRACTED_DIR_NAME}"
-
-# Prune unnecessary files from source
-for f in "${PRUNE_FILES[@]}"; do
-  [ -e "${SOURCE_DIR}/${f}" ] && rm -f "${SOURCE_DIR}/${f}"
-done
-
-#
 # Install for each selected agent
-#
 for agent in "${SELECTED_AGENTS[@]}"; do
   if [[ "${INSTALL_LEVEL}" == "user" ]]; then
     AGENT_DIR="${HOME}/.${agent}"
@@ -130,20 +95,16 @@ for agent in "${SELECTED_AGENTS[@]}"; do
   fi
 
   SKILLS_DIR="${AGENT_DIR}/skills"
-  INSTALL_DIR="${SKILLS_DIR}/${REPO_NAME}"
 
   echo "Installing for ${agent} at ${INSTALL_LEVEL} level..."
 
   # Create skills directory
   mkdir -p "${SKILLS_DIR}"
 
-  # Remove existing installation
-  rm -rf "${INSTALL_DIR}"
+  # Copy all skills
+  cp -r "${SOURCE_SKILLS_DIR}"/* "${SKILLS_DIR}/"
 
-  # Copy skill files
-  cp -r "${SOURCE_DIR}" "${INSTALL_DIR}"
-
-  echo "✓ Installed ${REPO_NAME} for ${agent} into ${INSTALL_DIR}"
+  echo "✓ Installed skills for ${agent} into ${SKILLS_DIR}"
 done
 
 echo ""

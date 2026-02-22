@@ -1,36 +1,22 @@
-# Spring Boot Skills for AI Coding Agents
+# SivaLabs Skills for AI Coding Agents
 
-A collection of skills/guidelines for building Spring Boot applications.
+A collection of skills/guidelines for building applications using AI Agents.
+
+## Skills
+- [Spring Boot](skills/spring-boot)
 
 ## Usage
 
 ```shell
-$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/spring-boot-skill/refs/heads/main/install.sh | bash
+$ curl -fsSL https://raw.githubusercontent.com/sivaprasadreddy/sivalabs-agent-skills/refs/heads/main/install.sh | bash
 ```
 
-### Claude Code
+Install skills at project-level or user-level.
 
-To use globally copy `spring-boot-skill` directory into `~/.claude/skills/` directory.
-
-To use in a project, copy `spring-boot-skill` directory into `{project_root}/.claude/skills/` directory.
-
-For more info refer https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
-
-### OpenAI Codex
-
-To use globally copy `spring-boot-skill` directory into `~/.codex/skills/` directory.
-
-To use in a project, copy `spring-boot-skill` directory into `{project_root}/.codex/skills/` directory.
-
-For more info refer https://developers.openai.com/codex/skills/
-
-### Google Gemini CLI
-
-To use globally copy `spring-boot-skill` directory into `~/.gemini/skills/` directory.
-
-To use in a project, copy `spring-boot-skill` directory into `{project_root}/.gemini/skills/` directory.
-
-For more info refer https://geminicli.com/docs/cli/skills/
+- Claude Code: `project/.claude/skills/` or `~/.claude/skills/`
+- Codex: `project/.codex/skills/` or `~/.codex/skills/`
+- Gemini: `project/.gemini/skills/` or `~/.gemini/skills/`
+- Cursor: `project/.cursor/skills/` or `~/.cursor/skills/`
 
 ### Agent Skills with symlinks
 
@@ -46,3 +32,8 @@ ln -s {project_root}/.agents {project_root}/.gemini
 ```
 
 This way, all agents will use the same skills, and any updates to the `.agents/skills` will be reflected for all agents.
+
+## References
+* https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+* https://developers.openai.com/codex/skills/
+* https://geminicli.com/docs/cli/skills/
