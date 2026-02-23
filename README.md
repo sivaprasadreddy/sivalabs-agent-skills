@@ -14,16 +14,6 @@ $ npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills
 $ npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills --skill spring-boot
 ```
 
-### Claude Code
-
-```shell
-# Add marketplace
-/plugin marketplace add sivaprasadreddy/sivalabs-agent-skills
-/plugin enable sivaprasadreddy/sivalabs-agent-skills
-# Install plugin
-/plugin install sivalabs-agent-skills@sivalabs-agent-skills
-```
-
 ### Gemini CLI
 
 ```shell
