@@ -5,11 +5,17 @@ description: >
   Spring Boot apps that use Spring MVC, Spring Data JPA, Spring Modulith, Spring Security, or
   Spring Boot testing including package structure, REST APIs, entities/repositories, service layer,
   modular monoliths, and REST API tests.
+
+  Configure Maven pom.xml with supporting plugins and configurations to improve code quality, and testing.
 ---
 
 # Spring Boot Skill
 
 Apply the practices below when developing Spring Boot applications. Read the linked reference only when working on that area.
+
+## Maven pom.xml Configuration
+
+Read [references/spring-boot-maven-config.md](references/spring-boot-maven-config.md) for Maven `pom.xml` configuration with supporting plugins and configurations to improve code quality, and testing.
 
 ## Package structure
 
