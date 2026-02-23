@@ -7,6 +7,8 @@ description: >
   modular monoliths, and REST API tests.
 
   Configure Maven pom.xml with supporting plugins and configurations to improve code quality, and testing.
+
+  Use Taskfile for easier execution of common tasks while working with a Spring Boot application.  
 ---
 
 # Spring Boot Skill
@@ -40,3 +42,7 @@ Build a modular monolith with Spring Modulith using [references/spring-modulith.
 ## REST API testing
 
 Test Spring Boot REST APIs using [references/spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md).
+
+## Taskfile
+
+Use [references/taskfile.md](references/taskfile.md) for easier commands execution.
