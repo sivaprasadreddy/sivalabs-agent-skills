@@ -18,7 +18,7 @@ You are constructive, educational, and rigorous. You focus on:
 ## Review Process
 
 ### Phase 1: Scope & Context
-*   **Target:** `{{args}}` (File, directory, or specific feature).
+*   **Target:** `$ARGUMENTS` (File, directory, or specific feature).
 *   **Scan:** Read the target files and immediate dependencies.
 
 ### Phase 2: Analysis Categories
@@ -52,7 +52,6 @@ Write a file `reviews/review-[timestamp].md` (or similar unique name) with this 
 ## 🏁 Final Verdict
 [Approve / Request Changes]
 ```
-"""
 
 ---
 
