@@ -14,6 +14,23 @@ $ npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills
 $ npx skills add https://github.com/sivaprasadreddy/sivalabs-agent-skills --skill spring-boot
 ```
 
+### Claude Code
+
+```shell
+# Add marketplace
+/plugin marketplace add sivaprasadreddy/sivalabs-agent-skills
+/plugin enable sivaprasadreddy/sivalabs-agent-skills
+# Install plugin
+/plugin install sivalabs-agent-skills@sivalabs-agent-skills
+```
+
+### Gemini CLI
+
+```shell
+$ gemini skills install https://github.com/sivaprasadreddy/spring-boot-skill.git --scope workspace --path skills
+gemini skills enable spring-boot
+```
+
 ## Manual Installation
 Copy the desired skills (`skills/spring-boot`, etc) at project-level (`project/.claude/skills/spring-boot`) or user-level (`~/.claude/skills/spring-boot`).
 

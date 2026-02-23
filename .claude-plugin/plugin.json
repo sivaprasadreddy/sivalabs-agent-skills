@@ -1,0 +1,29 @@
+{
+  "name": "sivalabs-agent-skills",
+  "version": "1.0.0",
+  "description": "A collection of plugins for Java application development",
+  "author": {
+    "name": "K Siva Prasad Reddy",
+    "email": "sivaprasadreddy.k@gmail.com",
+    "url": "https://sivalabs.dev"
+  },
+  "homepage": "https://github.com/sivaprasadreddy/sivalabs-agent-skills",
+  "repository": "https://github.com/sivaprasadreddy/sivalabs-agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "agents",
+    "skills",
+    "hooks",
+    "rules",
+    "code-review",
+    "workflow",
+    "automation",
+    "best-practices"
+  ],
+  "skills": ["./skills/", "./commands/"],
+  "agents": [
+    "./agents/planner.md",
+    "./agents/code-reviewer.md"
+  ]
+}
