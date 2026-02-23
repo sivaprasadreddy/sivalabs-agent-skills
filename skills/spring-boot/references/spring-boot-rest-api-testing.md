@@ -42,6 +42,13 @@ Add Testcontainers dependencies:
 </dependencies>
 ```
 
+**IMPORTANT:** Make sure to use the Testcontainers 2.x maven dependency coordinates are used and non-deprecated classes are used.
+
+- Use `org.testcontainers:testcontainers-junit-jupiter` instead of `org.testcontainers:junit-jupiter`
+- Use `org.testcontainers:testcontainers-postgresql` instead of `org.testcontainers:postgresql`
+- Use `org.testcontainers.postgresql.PostgreSQLContainer` instead of `org.testcontainers.containers.PostgreSQLContainer`
+
+
 ```java
 package dev.sivalabs.projectname;
 
