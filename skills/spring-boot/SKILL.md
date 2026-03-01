@@ -1,14 +1,22 @@
 ---
 name: spring-boot-skill
 description: >
-  Build Spring Boot 4.x applications following best practices. Use when developing or modifying
-  Spring Boot apps that use Spring MVC, Spring Data JPA, Spring Modulith, Spring Security, or
-  Spring Boot testing including package structure, REST APIs, entities/repositories, service layer,
-  modular monoliths, and REST API tests.
+  Build Spring Boot 4.x applications following the best practices. 
+  Use these guidelines when developing Spring Boot applications 
+  that use Spring MVC, Spring Data JPA, Spring Modulith, Spring Security.
+  
+  Use these guidelines to create recommended Spring Boot package structure.
+  
+  Use these best practices while implementing REST APIs, entities/repositories, service layer,
+  modular monoliths.
+  
+  Use these guidelines while writing tests for REST APIs and Web applications.
 
-  Configure Maven pom.xml with supporting plugins and configurations to improve code quality, and testing.
+  Configure the recommended plugins and configurations to improve code quality, and testing while using Maven.
 
-  Use Taskfile for easier execution of common tasks while working with a Spring Boot application.  
+  Use these guidelines to use Spring Boot's Docker Compose support for local development.
+
+  Use Taskfile for easier execution of common tasks while working with a Spring Boot application.
 ---
 
 # Spring Boot Skill
@@ -39,9 +47,15 @@ Implement REST APIs with Spring MVC using [references/spring-webmvc-rest-api.md]
 
 Build a modular monolith with Spring Modulith using [references/spring-modulith.md](references/spring-modulith.md).
 
-## REST API testing
+## REST API Testing
 
-Test Spring Boot REST APIs using [references/spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md).
+If building a REST API using Spring WebMVC, test Spring Boot REST APIs using [references/spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md).
+
+### Web App Controller Testing
+If building a web application using view rendering controllers, test the controller layer using [references/spring-boot-webapp-testing-with-mockmvctester.md](references/spring-boot-webapp-testing-with-mockmvctester.md).
+
+### Spring Boot Docker Compose Support
+To use Docker Compose support for local development, refer [references/spring-boot-docker-compose.md](references/spring-boot-docker-compose.md).
 
 ## Taskfile
 
