@@ -23,25 +23,6 @@ description: >
 
 Apply the practices below when developing Spring Boot applications. Read the linked reference only when working on that area.
 
-## Prerequisites
-
-This skill assumes you have a working Java development environment and the `task` utility
-installed. Instructions vary by operating system; a single variable (`OS`) is used in the
-`Taskfile.yml` to drive platform‑specific behavior.
-
-- **macOS**: install with Homebrew (`brew install go-task`).
-- **Ubuntu/Debian**: install via `apt` (`sudo apt update && sudo apt install -y go-task`).
-- **Windows**: download the binary from https://taskfile.dev/ or use `choco install go-task`.
-
-Also ensure you have:
-
-- JDK 17+ (or later) installed
-- Docker and Docker Compose (`docker.io docker-compose` on Ubuntu)
-
-The remainder of the document is platform‑agnostic; the included `Taskfile.yml` uses the
-`GOOS`/`OS` variable to switch paths and commands automatically.
-
-
 ## Maven pom.xml Configuration
 
 Read [references/spring-boot-maven-config.md](references/spring-boot-maven-config.md) for Maven `pom.xml` configuration with supporting plugins and configurations to improve code quality, and testing.
