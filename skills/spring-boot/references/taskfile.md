@@ -3,10 +3,29 @@
 [Task](https://taskfile.dev/) is a cross-platform utility for executing tasks defined in a YAML file. 
 It provides a simple and intuitive way to define and run tasks, making it easier to automate repetitive tasks and streamline workflows.
 
+## Required Tools
+
+To run the tasks defined below, ensure the following are installed:
+
+- JDK 21+ (or later) installed
+- Docker and Docker Compose (`docker.io docker-compose` on Ubuntu)
+
 ## Installation
 
+The `task` tool is cross‑platform.  You can install it using the package manager for your OS
+or by downloading the binary directly from the [project site](https://taskfile.dev/).
+
 ```shell
-$ brew install go-task
+# macOS (Homebrew)
+brew install go-task
+
+# Ubuntu / Debian
+sudo apt update
+sudo apt install -y go-task
+
+# Windows (PowerShell)
+# choco install go-task
+# or download and unzip the executable
 ```
 
 ## Taskfile
