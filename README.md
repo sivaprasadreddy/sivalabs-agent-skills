@@ -4,6 +4,7 @@ A collection of skills/guidelines for building applications using AI Agents.
 
 ## Skills
 - [Spring Boot](skills/spring-boot)
+- [jSpecify](skills/jspecify)
 
 ## Usage
 
