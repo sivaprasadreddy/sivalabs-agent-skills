@@ -11,7 +11,7 @@
   },
   "plugins": [
     {
-      "name": "sivalabs-agent-skills",
+      "name": "java-dev",
       "description": "A collection of agents, skills, hooks, commands, and rules for AI Agentic development workflow",
       "author": {
         "name": "K Siva Prasad Reddy"
