@@ -1,6 +1,12 @@
 ---
 name: jspecify-skill
-description: Use this skill when asked to add jSpecify support in a Java project
+description: >
+  Use this skill when asked to perform any of the following actions in a Java project:
+    - To add jspecify support
+    - To prevent NullPointerExceptions
+    - To better handle Nullability
+
+  This skill will add jspecify dependency, configure Maven or Gradle build to automatically use jspecify for checking Nullability issues.
 ---
 
 Jspecify provides a set of annotations to explicitly declare the nullness expectations of the Java code.
