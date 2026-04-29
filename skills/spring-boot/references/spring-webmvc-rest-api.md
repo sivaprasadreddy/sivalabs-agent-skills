@@ -10,7 +10,7 @@
 
 Follow these principles when creating REST APIs with Spring Web MVC:
 
-- For Spring Boot 4.x projects, use Jackson 3.x library instead of Jackson 2.x 
+- For Spring Boot 4.x projects, use the Jackson 3.x library instead of Jackson 2.x 
 - Use `tools.jackson.databind.json.JsonMapper` instead of `com.fasterxml.jackson.databind.ObjectMapper`
 - Use **converters** to bind `@PathVariable` and `@RequestParam` to Value Objects
 - Use **Jackson** for `@RequestBody` binding to Request Objects with Value Object properties
@@ -149,7 +149,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setTitle("Validation Error");
         problemDetail.setProperty("errors", errors);
         problemDetail.setProperty("timestamp", Instant.now());
-        return ResponseEntity.status(UNPROCESSABLE_CONTENT).body(problemDetail);
+        return ResponseEntity.status(BAD_REQUEST).body(problemDetail);
     }
 
     @ExceptionHandler(DomainException.class)

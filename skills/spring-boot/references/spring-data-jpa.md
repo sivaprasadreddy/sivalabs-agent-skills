@@ -1,6 +1,7 @@
 # Spring Data JPA
 
 - [Key principles](#key-principles)
+- [Configure Spring Data JPA properties](#configure-spring-data-jpa-properties)
 - [IdentityGenerator (TSID)](#identitygenerator)
 - [Value Object for Primary Key](#value-object-for-primary-key)
 - [JPA Auditing](#use-jpa-auditing-support)
@@ -30,6 +31,19 @@ Follow these principles when using Spring Data JPA:
 - Use **constructor expressions** or **Projections** for read operations
 - Use **default methods** for convenience operations
 
+## Configure Spring Data JPA properties
+
+```properties
+spring.datasource.hikari.auto-commit=false
+spring.jpa.show-sql=false
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.jdbc.batch_size=15
+spring.jpa.properties.hibernate.order_inserts=true
+spring.jpa.properties.hibernate.order_updates=true
+spring.jpa.properties.hibernate.connection.provider_disables_autocommit=true
+spring.jpa.properties.hibernate.query.fail_on_pagination_over_collection_fetch=true
+```
+
 ## IdentityGenerator
 
 To use TSID, add the following dependency:
@@ -37,8 +51,8 @@ To use TSID, add the following dependency:
 ```xml
 <dependency>
     <groupId>io.hypersistence</groupId>
-    <artifactId>hypersistence-utils-hibernate-71</artifactId>
-    <version>3.14.1</version>
+    <artifactId>hypersistence-utils-hibernate-73</artifactId>
+    <version>3.15.2</version>
 </dependency>
 ```
 
