@@ -1,19 +1,14 @@
 ---
 name: jspecify-skill
-description: >
-  Use this skill when asked to perform any of the following actions in a Java project:
-    - To add jspecify support
-    - To prevent NullPointerExceptions
-    - To better handle Nullability
-
-  This skill will add jspecify dependency, configure Maven or Gradle build to automatically use jspecify for checking Nullability issues.
+description: Use this skill when asked to add jSpecify support in a Java project
 ---
 
 Jspecify provides a set of annotations to explicitly declare the nullness expectations of the Java code.
 
 ## Add jSpecify support in Maven projects
-If you are using Maven, then add the jspecify dependency in `pom.xml`.
-In `pom.xml`, update or add the `maven-compiler-plugin`, to include the following configuration.
+If you are using Maven, add the jspecify dependency in `pom.xml`.
+In single-module projects, add it to that module's `pom.xml`. In multi-module projects, add the dependency to each module's `pom.xml` that contains Java sources requiring jspecify, or declare the version in the parent POM's `<dependencyManagement>` and add module-level dependencies.
+In `pom.xml`, update or add the `maven-compiler-plugin` configuration below.
 
 ```xml
 <dependencies>
@@ -31,13 +26,17 @@ In `pom.xml`, update or add the `maven-compiler-plugin`, to include the followin
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.14.1</version>
             <configuration>
-                <release>25</release>
+                <release>${maven.compiler.release}</release>
                 <encoding>UTF-8</encoding>
                 <fork>true</fork>
                 <compilerArgs>
                     <arg>-XDcompilePolicy=simple</arg>
                     <arg>--should-stop=ifError=FLOW</arg>
-                    <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:OnlyNullMarked -XepOpt:NullAway:JSpecifyMode=true</arg>
+                    <arg>-Xplugin:ErrorProne</arg>
+                    <arg>-XepDisableAllChecks</arg>
+                    <arg>-Xep:NullAway:ERROR</arg>
+                    <arg>-XepOpt:NullAway:OnlyNullMarked</arg>
+                    <arg>-XepOpt:NullAway:JSpecifyMode=true</arg>
                     <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
                     <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
                     <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
@@ -68,7 +67,7 @@ In `pom.xml`, update or add the `maven-compiler-plugin`, to include the followin
 ```
 
 ## Add jSpecify support in Gradle projects
-If you are using Gradle, then add the jspecify dependency.
+If you are using Gradle, add the jspecify dependency to the module(s) that contain Java sources requiring jspecify. In a multi-module Gradle build, apply this configuration in each module or use a shared convention plugin.
 In `build.gradle` or `build.gradle.kts`, update or add the following jspecify configuration.
 
 ```groovy
@@ -83,8 +82,9 @@ tasks.withType(JavaCompile).configureEach {
         error("NullAway") // bump checks from warnings (default) to errors
         option("NullAway:JSpecifyMode", "true") // https://github.com/uber/NullAway/wiki/JSpecify-Support
     }
-    // Keep a JDK 25 baseline
-    options.release = 25
+    // Set this to your project's target Java major version, or use a shared property like java.toolchain.languageVersion.
+    // Verify the installed JDK with `java -version`; if the installed JDK is older, adjust this value or install a matching JDK.
+    options.release = 21
 }
 
 dependencies {
@@ -95,17 +95,15 @@ dependencies {
 ```
 
 ## Add @NullMarked to package-info.java files
-In every java package under the application main source code (`src/main/java`), 
-create `package-info.java` if not exists already, and add the `@NullMarked` annotation as follows:
+For each source package directory that contains at least one `.java` file under the project's `src/main/java` tree (exclude generated sources and `src/test/java`), ensure a `package-info.java` exists and add the `@NullMarked` annotation exactly as shown:
 
 ```java
 @org.jspecify.annotations.NullMarked
 package com.mycompnay.myproject;
 ```
 
-If `package-info.java` file already exists, update the file to add `@org.jspecify.annotations.NullMarked` annotation.
-DO NOT REMOVE ANY OTHER EXISTING CODE IN `package-info.java` FILE.
+If `package-info.java` already exists, insert `@org.jspecify.annotations.NullMarked` immediately above the `package` declaration as the first non-comment, non-blank line. Preserve all other existing imports, comments, annotations, and package declaration lines without removing or reordering them.
+For multi-module projects, repeat this package-info change in each module's `src/main/java` tree.
 
 ## Verify jSpecify support
-If python is installed, after adding the jSpecify support, run `scripts/verify_nullmarked.py` 
-to check if all non-empty packages has `package-info.java` file or not.
+If Python 3 is available, run `python3 scripts/verify_nullmarked.py` from the repository root. If Python 3 is not installed, report: `Python 3 required to run scripts/verify_nullmarked.py; install python3 or run an alternative verifier.`
