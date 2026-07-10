@@ -13,7 +13,7 @@ Jspecify provides a set of annotations to explicitly declare the nullness expect
 
 ## Add jSpecify support in Maven projects
 If you are using Maven, then add the jspecify dependency in `pom.xml`.
-In `pom.xml`, update or add the `maven-compiler-plugin`, to include the following configuration.
+In `pom.xml`, update or add the `nullability-maven-plugin`, to include the following configuration.
 
 ```xml
 <dependencies>
@@ -27,41 +27,23 @@ In `pom.xml`, update or add the `maven-compiler-plugin`, to include the followin
 <build>
     <plugins>
         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.14.1</version>
+            <groupId>am.ik.maven</groupId>
+            <artifactId>nullability-maven-plugin</artifactId>
+            <version>0.4.2</version>
+            <extensions>true</extensions>
             <configuration>
-                <release>25</release>
-                <encoding>UTF-8</encoding>
-                <fork>true</fork>
-                <compilerArgs>
-                    <arg>-XDcompilePolicy=simple</arg>
-                    <arg>--should-stop=ifError=FLOW</arg>
-                    <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:OnlyNullMarked -XepOpt:NullAway:JSpecifyMode=true</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                    <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                    <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
-                </compilerArgs>
-                <annotationProcessorPaths>
-                    <path>
-                        <groupId>com.google.errorprone</groupId>
-                        <artifactId>error_prone_core</artifactId>
-                        <version>2.42.0</version>
-                    </path>
-                    <path>
-                        <groupId>com.uber.nullaway</groupId>
-                        <artifactId>nullaway</artifactId>
-                        <version>0.12.12</version>
-                    </path>
-                </annotationProcessorPaths>
+                <checking>tests</checking>
+                <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+                <testOutputDirectory>${project.basedir}/src/test/java</testOutputDirectory>
             </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>configure</goal>
+                        <goal>generate-package-info</goal>
+                    </goals>
+                </execution>
+            </executions>
         </plugin>
     </plugins>
 </build>
@@ -73,24 +55,31 @@ In `build.gradle` or `build.gradle.kts`, update or add the following jspecify co
 
 ```groovy
 plugins {
-    id("net.ltgt.errorprone") version "4.3.0"
+    id("net.ltgt.errorprone") version "5.1.0"
+    id("net.ltgt.nullaway") version "3.1.0"
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone {
         disableAllChecks = true // Other error prone checks are disabled
-        option("NullAway:OnlyNullMarked", "true") // Enable nullness checks only in null-marked code
-        error("NullAway") // bump checks from warnings (default) to errors
-        option("NullAway:JSpecifyMode", "true") // https://github.com/uber/NullAway/wiki/JSpecify-Support
+        error("RequireExplicitNullMarking") // Require @NullMarked or @NullUnmarked on everything
+        nullaway {
+            error()
+        }
     }
     // Keep a JDK 25 baseline
     options.release = 25
 }
 
+nullaway {
+    onlyNullMarked = true
+    jspecifyMode = true
+}
+
 dependencies {
     implementation("org.jspecify:jspecify:1.0.0")
-    errorprone("com.google.errorprone:error_prone_core:2.42.0")
-    errorprone("com.uber.nullaway:nullaway:0.12.12")
+    errorprone("com.google.errorprone:error_prone_core:2.50.0")
+    errorprone("com.uber.nullaway:nullaway:0.13.7")
 }
 ```
 
