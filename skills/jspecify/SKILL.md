@@ -109,3 +109,26 @@ DO NOT REMOVE ANY OTHER EXISTING CODE IN `package-info.java` FILE.
 ## Verify jSpecify support
 If python is installed, after adding the jSpecify support, run `scripts/verify_nullmarked.py` 
 to check if all non-empty packages has `package-info.java` file or not.
+
+## Migrating an existing codebase from other annotation libraries
+
+If the project already uses another nullability annotation library (JSR-305 / `javax`, Jakarta,
+JetBrains, Spring, Android, FindBugs/SpotBugs, Checker Framework, or Eclipse JDT), migrate those
+annotations to JSpecify **before** adding `@NullMarked`. The OpenRewrite `MigrateToJSpecify` recipe
+automates the common cases (javax, Jakarta, JetBrains, Micrometer, Micronaut); the rest are a short
+manual mapping. See [references/annotation-migration.md](references/annotation-migration.md).
+
+## Incremental adoption for large codebases
+
+Flipping every package to `@NullMarked` at once is impractical on a large or legacy codebase.
+`@NullUnmarked` lets you enforce NullAway on a growing perimeter while the rest stays untouched.
+Because the build above enables `OnlyNullMarked` mode, packages without `@NullMarked` are simply
+ignored — so adoption is driven purely by adding markers, one package at a time. Strategies,
+progress tracking, common NullAway errors, and redundant null-guard removal are in
+[references/incremental-adoption.md](references/incremental-adoption.md).
+
+## Kotlin interop (optional)
+
+If the project also has Kotlin sources, the Kotlin compiler (K2) reads JSpecify annotations on Java
+APIs and surfaces accurate nullability instead of platform types. See
+[references/kotlin-interop.md](references/kotlin-interop.md).
