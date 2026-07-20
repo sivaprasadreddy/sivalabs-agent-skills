@@ -5,6 +5,10 @@
 - [BaseIT](#baseitjava)
 - [Sample controller test](#sample-restcontroller-test)
 
+> This is the end-to-end (real-port) layer. For choosing the right test level and keeping the suite fast, see [testing-strategy.md](testing-strategy.md); for stubbing external HTTP called during these tests, see [testing-integration.md](testing-integration.md).
+>
+> **3.5.x vs 4.x:** `RestTestClient` + `@AutoConfigureRestTestClient` are Boot 4.x (module `spring-boot-resttestclient`); `@AutoConfigureTestRestTemplate` is also required on 4.x. On **3.5.x** use `WebTestClient` or `TestRestTemplate` instead, the Jackson 2 (`com.fasterxml.jackson`) mapper, and Testcontainers **1.x** coordinates (`org.testcontainers:junit-jupiter`, `:postgresql`, `org.testcontainers.containers.PostgreSQLContainer`).
+
 ## Key principles
 
 Follow these principles when testing Spring Boot Web MVC REST APIs:

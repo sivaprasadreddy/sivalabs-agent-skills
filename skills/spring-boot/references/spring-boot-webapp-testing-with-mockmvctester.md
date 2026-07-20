@@ -1,5 +1,9 @@
 # Spring Boot Web Application Testing with MockMvcTester
 
+> This is the web slice. For choosing the right test level see [testing-strategy.md](testing-strategy.md); for `@JsonTest` / `@RestClientTest` and the "security isn't auto-applied in slices — `@Import(SecurityConfig.class)`" gotcha, see [testing-slices-web.md](testing-slices-web.md).
+>
+> **3.5.x vs 4.x:** `MockMvcTester` is Boot 3.4+ (works on both lines). `@MockitoBean` replaces `@MockBean`, which is deprecated on 3.5.x and **removed on 4.x**. The web slice test starter is `spring-boot-starter-test` on 3.5.x and `spring-boot-starter-webmvc-test` on 4.x.
+
 ## Key principles
 
 Follow these principles when testing Spring Boot Web MVC controllers with MockMvcTester:
