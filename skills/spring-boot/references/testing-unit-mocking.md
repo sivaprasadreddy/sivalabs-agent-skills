@@ -60,6 +60,10 @@ This layer is version-agnostic: the only difference is the JUnit version — **J
 3.5.x, **JUnit 6** on 4.x — which does not change any of the code above. Mockito and
 AssertJ come transitively via the test starter in both lines.
 
+> **GraalVM native image:** Mockito does not work in a native image, so `@Mock`-based tests
+> (and `@MockitoBean`) can't run under `nativeTest` — see the native-image caveat in
+> [testing-strategy.md](testing-strategy.md).
+
 ---
 
 *Unit-testing and mocking guidance credit **Philip Riecks**, *Testing Spring Boot

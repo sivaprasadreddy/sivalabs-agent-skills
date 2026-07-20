@@ -95,6 +95,25 @@ slow, paid OpenAI call while keeping the database real); keep everything else re
 rationale and the over-mocking smell live in
 [testing-unit-mocking.md](testing-unit-mocking.md).
 
+## GraalVM native-image testing: mocks don't work
+
+If you run the suite as a native image (`mvn -PnativeTest test` / `gradle nativeTest`) to
+validate native compatibility, **Mockito is not supported in a native image** — `@Mock`,
+`@MockitoBean`, `@MockitoSpyBean` (and 3.5.x's `@MockBean`/`@SpyBean`) fail there because
+Mockito generates classes at runtime, which the closed-world native image forbids.
+
+- **Skip mock-based tests in native runs** with JUnit's `@DisabledInNativeImage` on the
+  affected classes/methods.
+- **For a native-safe bean replacement, prefer `@TestBean`** (a static factory method
+  returning a real or hand-written stub) — the non-Mockito bean-override, and general Bean
+  Override support, work in native image.
+- This is another reason to lean on **real-component / Testcontainers** tests (the sliced
+  Variant B and integration tests, which use no mocks): those run natively and are what
+  actually exercise native compatibility. See
+  [testing-integration.md](testing-integration.md).
+
+Source: [Testing GraalVM Native Images](https://docs.spring.io/spring-boot/how-to/native-image/testing-native-applications.html).
+
 ## 3.5.x vs 4.x
 
 - Context caching and its cache key work the same on both lines.
