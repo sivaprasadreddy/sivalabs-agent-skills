@@ -48,14 +48,15 @@ If Thymeleaf is used for view templates, refer [references/thymeleaf.md](referen
 
 ## Testing
 
-Match the test to what you are testing — push each test as far down the pyramid as it will go (unit → slice → integration). Full `@SpringBootTest` is slow; use it sparingly. For the level decision, and how a large suite stays fast (context caching, one container for the whole suite), read [references/testing-strategy.md](references/testing-strategy.md).
+Write tests at complementary levels — unit, sliced Spring tests, and at least one end-to-end/smoke test. They are **not** either/or: each catches bugs the others can't (a green unit test still passes when a mapping or annotation is broken). Most framework-touching tests belong at the fast **sliced** level (`@SpringBootTest(classes = …)` or a slice annotation); keep full-context `@SpringBootTest` for a smoke test plus a request-level end-to-end. For the level decision and keeping a large suite fast (context caching, one container for the suite), read [references/testing-strategy.md](references/testing-strategy.md).
 
 | What you're testing | Level | Reference |
 |---|---|---|
 | Business/domain logic, no framework | Unit (no Spring context) | [testing-unit-mocking.md](references/testing-unit-mocking.md) |
 | JPA / JDBC / JdbcClient / Spring Data JDBC / jOOQ queries | Persistence slice + Testcontainers | [testing-slices-persistence.md](references/testing-slices-persistence.md) |
 | Controller, JSON serialization, or a REST client | Web slice (`@WebMvcTest`/`@JsonTest`/`@RestClientTest`) | [testing-slices-web.md](references/testing-slices-web.md) |
-| The assembled system / external HTTP (WireMock) | Integration `@SpringBootTest` | [testing-integration.md](references/testing-integration.md) |
+| A few components together / external HTTP (WireMock) | Sliced `@SpringBootTest(classes = …)` | [testing-integration.md](references/testing-integration.md) |
+| Whole app starts / one real request end-to-end | Smoke + request-level e2e | [testing-integration.md](references/testing-integration.md) |
 | Full REST API over a real port (`RestTestClient`) | End-to-end | [spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md) |
 | A view-rendering controller (`MockMvcTester`) | Web slice | [spring-boot-webapp-testing-with-mockmvctester.md](references/spring-boot-webapp-testing-with-mockmvctester.md) |
 | Wiring a container (`@ServiceConnection` / dynamic properties) | — | [testcontainers-wiring.md](references/testcontainers-wiring.md) |
