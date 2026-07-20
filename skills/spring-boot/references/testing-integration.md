@@ -210,6 +210,12 @@ class CheckoutIntegrationTest {
   `TestRestTemplate` (`@AutoConfigureTestRestTemplate` — required on 4.x); both live in the
   new `spring-boot-resttestclient` module. On 3.5.x use `WebTestClient`/`TestRestTemplate`.
 - Testcontainers coordinates: 1.x (3.5.x) vs 2.x (4.x).
+- **Test-autoconfigure annotations moved packages in Boot 4** (modular restructuring), so
+  the imports in a custom slice like `@EnableDatabaseTest` differ by version — let your IDE
+  resolve them. For example: `AutoConfigureDataJpa` is `org.springframework.boot.data.jpa.test.autoconfigure`
+  on 4.x vs `org.springframework.boot.test.autoconfigure.orm.jpa` on 3.5.x; `@EntityScan` is
+  `org.springframework.boot.persistence.autoconfigure` on 4.x vs `org.springframework.boot.autoconfigure.domain`
+  on 3.5.x. (`@EnableJpaRepositories` stays in Spring Data's `org.springframework.data.jpa.repository.config`.)
 - 4.x-only: **context pausing** (Spring Framework 7) and improved `@TestConfiguration`
   bean-override ergonomics — see [testing-strategy.md](testing-strategy.md).
 

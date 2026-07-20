@@ -42,6 +42,8 @@ Over-mocking is a smell. Two habits keep tests refactor-safe:
 - **Use `verify()` sparingly** — mainly to prove a side effect happened (a charge was
   issued) or did *not* (`verifyNoInteractions(paymentGateway)` for an empty cart).
 
+## Keep cases DRY
+
 Collapse near-identical cases with `@ParameterizedTest` (`@ValueSource` / `@CsvSource` /
 `@MethodSource`) rather than copy-pasting test methods.
 
