@@ -75,9 +75,8 @@ class WeatherClientTest {
 ```
 
 `MockRestServiceServer` only intercepts Spring's `RestClient`/`RestTemplate`. For
-`WebClient`, HTTP-interface clients, third-party SDKs, or when you need a real port
-(timeouts, TLS, fault injection), escalate to WireMock in a full integration test — see
-[testing-integration.md](testing-integration.md).
+`WebClient`/HTTP-interface/SDK clients or when you need a real port, escalate to WireMock —
+see [testing-integration.md](testing-integration.md) for the full built-in-vs-WireMock rule.
 
 ## 3.5.x vs 4.x
 

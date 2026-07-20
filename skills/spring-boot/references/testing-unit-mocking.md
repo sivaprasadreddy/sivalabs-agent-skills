@@ -42,21 +42,8 @@ Over-mocking is a smell. Two habits keep tests refactor-safe:
 - **Use `verify()` sparingly** — mainly to prove a side effect happened (a charge was
   issued) or did *not* (`verifyNoInteractions(paymentGateway)` for an empty cart).
 
-## Parameterized tests over duplication
-
-Collapse near-identical cases with `@ParameterizedTest` + `@ValueSource` / `@CsvSource`:
-
-```java
-@ParameterizedTest
-@CsvSource({
-    "978-0132350884, true",
-    "invalid-isbn,   false",
-    "123,            false",
-})
-void validatesIsbn(String isbn, boolean expected) {
-    assertThat(validator.isValid(isbn)).isEqualTo(expected);
-}
-```
+Collapse near-identical cases with `@ParameterizedTest` (`@ValueSource` / `@CsvSource` /
+`@MethodSource`) rather than copy-pasting test methods.
 
 ## What not to unit-test at all
 

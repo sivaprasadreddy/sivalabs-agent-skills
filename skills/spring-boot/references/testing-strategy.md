@@ -46,16 +46,8 @@ Roughly:
 - **Some unit tests** for complex framework-free business logic — fine, just rarely
   sufficient on their own. See [testing-unit-mocking.md](testing-unit-mocking.md).
 
-### Which level(s) for what
-
-| You are testing… | Reach for | Reference |
-|---|---|---|
-| Complex framework-free business logic | Unit (no context) | [testing-unit-mocking.md](testing-unit-mocking.md) |
-| Repository / JDBC / jOOQ queries | Persistence slice + Testcontainers | [testing-slices-persistence.md](testing-slices-persistence.md) |
-| Controller, JSON, or a REST client | Web slice | [testing-slices-web.md](testing-slices-web.md) |
-| A handful of components working together | Sliced `@SpringBootTest(classes = …)` | [testing-integration.md](testing-integration.md) |
-| The whole app starts / one real request end-to-end | Smoke + request-level e2e | [testing-integration.md](testing-integration.md) |
-| Full REST API over a real port | End-to-end | [spring-boot-rest-api-testing.md](spring-boot-rest-api-testing.md) |
+For the "what am I testing → which reference" lookup, use the decision table in `SKILL.md`
+(always in context). This file is the *why* behind that table.
 
 ## Why the sliced test is the workhorse: context cost
 
@@ -98,10 +90,10 @@ remotely with transparent port-forwarding. This composes with context caching to
 
 ## Mocking is a boundary tool
 
-Mock at architectural boundaries (external services, clock, randomness) — Bakker's example
-mocks the slow, paid OpenAI call while keeping the database real; use real value objects and
-pure logic elsewhere. Over-mocking couples tests to internals; assert *what* the code
-produces, not *how*. See [testing-unit-mocking.md](testing-unit-mocking.md).
+Mock at architectural boundaries — external services, clock, randomness (Bakker mocks the
+slow, paid OpenAI call while keeping the database real); keep everything else real. The full
+rationale and the over-mocking smell live in
+[testing-unit-mocking.md](testing-unit-mocking.md).
 
 ## 3.5.x vs 4.x
 
