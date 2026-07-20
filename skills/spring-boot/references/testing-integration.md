@@ -44,51 +44,112 @@ class TopLevelRequestSmokeTest {
 
 ## Sliced-context tests: `@SpringBootTest(classes = { … })` — the workhorse
 
-This is the level most of your framework-touching tests should live at. Listing `classes`
-bootstraps **only** those components plus core DI — not the whole app — so it runs about as
-fast as a unit test while exercising the real framework, annotations, mappings, and (via
-Testcontainers) real SQL. Mock the slow/costly externals; keep everything else real.
+This is the level most framework-touching tests should live at. It has **two building
+blocks** working together:
+
+1. `@SpringBootTest(classes = { … })` registers exactly the components under test (plus a
+   `@TestConfiguration` that stubs slow/costly externals) — not the whole app.
+2. A **test-slice annotation** pulls in the auto-configuration the layer needs. Listing
+   `classes` alone gives you the beans but *not* the framework wiring (JPA repositories, the
+   web/GraphQL layer, …); the slice supplies that. Use a built-in slice (`@WebMvcTest`,
+   `@DataJpaTest`, …) — which is exactly `@SpringBootTest(classes)` + a preselected slice
+   under the hood — or, when you need to combine layers, a **custom meta-annotation** you
+   write once and reuse.
+
+**Mock the external, keep the rest real** — put the stub in a `@TestConfiguration` and list
+it in `classes`:
 
 ```java
-@SpringBootTest(classes = { MovieController.class, MovieService.class, ApiExceptionHandler.class })
-@AutoConfigureMockMvc
-@Import(TestcontainersConfig.class)               // real Postgres, not H2
-class MovieControllerSlicedTest {
-
-    @Autowired MockMvcTester mockMvc;
-
-    // Override just the slow/paid external; the controller, service, advice and DB stay real.
-    @TestConfiguration
-    static class StubExternals {
-        @Bean
-        RecommendationClient recommendationClient() {
-            RecommendationClient stub = mock(RecommendationClient.class);
-            when(stub.top10(any())).thenReturn(List.of(1L, 2L, 3L));
-            return stub;
-        }
+@TestConfiguration
+class StubExternals {
+    @Bean
+    RecommendationClient recommendationClient() {         // the slow/paid dependency
+        var mock = mock(RecommendationClient.class);
+        when(mock.top10("US")).thenReturn(List.of(1L, 2L, 3L));
+        return mock;
     }
+}
+```
+
+**Variant A — mock the repository (fastest; no database).** Unit-test speed, but real
+service wiring:
+
+```java
+@SpringBootTest(classes = { MovieService.class, StubExternals.class })
+class MovieServiceSlicedTest {
+
+    @Autowired MovieService movieService;
+    @MockitoBean MovieRepository movieRepository;   // 3.4+/4.x; @MockBean on older 3.x
 
     @Test
-    void returnsTop10AndHandlesUnknownCountry() {
-        assertThat(mockMvc.get().uri("/api/movies/top10?country=US")).hasStatusOk();
-        assertThat(mockMvc.get().uri("/api/movies/top10?country=ZZ")).hasStatus(HttpStatus.BAD_REQUEST);
+    void ranksTop10() {
+        when(movieRepository.findAllById(any())).thenReturn(List.of(/* ... */));
+        assertThat(movieService.top10("US")).hasSize(3);
+    }
+}
+```
+
+**Variant B — real database via a custom Testcontainers slice.** Drop the repository mock,
+list the real repository, and add a reusable slice that wires JPA + a real Postgres. This
+pays a container start (so it is *not* unit-test fast) but exercises real SQL:
+
+```java
+@SpringBootTest(classes = { MovieService.class, MovieRepository.class, StubExternals.class })
+@EnableDatabaseTest
+class MovieServiceTestcontainersTest {
+
+    @Autowired MovieService movieService;
+
+    @Test
+    void ranksTop10FromRealDb() {
+        assertThat(movieService.top10("US"))
+                .extracting(Movie::title).contains("Stranger Things");
+    }
+}
+```
+
+The `@EnableDatabaseTest` meta-annotation — written **once**, reused across the suite —
+bundles the JPA + Testcontainers wiring (this is Paul Bakker's pattern, adapted):
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@EnableJpaRepositories(basePackages = "com.example.movies.repository")
+@EntityScan("com.example.movies.repository")
+@AutoConfigureDataJpa
+@AutoConfigureTestEntityManager
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)   // keep Postgres, not H2
+@Import(PostgresTestContainerConfig.class)
+public @interface EnableDatabaseTest {}
+```
+
+```java
+@TestConfiguration(proxyBeanMethods = false)
+public class PostgresTestContainerConfig {
+
+    @Bean
+    @ServiceConnection                                   // wires spring.datasource.* — no manual props
+    PostgreSQLContainer<?> postgres() {
+        return new PostgreSQLContainer<>("postgres:16-alpine")   // pin the tag, never untagged/latest
+                .withInitScript("shows.sql");
     }
 }
 ```
 
 Notes:
 
-- The built-in slice annotations (`@WebMvcTest`, `@DataJpaTest`, `@JsonTest`, …) are the
-  **same mechanism** — `@SpringBootTest`-style context selection with a preconfigured slice.
-  Prefer them when they fit ([testing-slices-web.md](testing-slices-web.md),
-  [testing-slices-persistence.md](testing-slices-persistence.md)); when they are too
-  limiting, list `classes` explicitly, optionally behind a custom test-slice meta-annotation
-  you reuse across the suite (e.g. `@EnableDatabaseTest` bundling the JPA + Testcontainers
-  setup).
-- To replace a bean, use `@MockitoBean` for a mock, or a `@TestConfiguration` `@Bean` for a
-  custom stub instance. Both change the context cache key, so consolidate them in a shared
-  base class to preserve context reuse (see [testing-strategy.md](testing-strategy.md)).
-  Boot 4 / Spring Framework 7 improves bean-override ergonomics here.
+- Prefer the built-in slices (`@WebMvcTest`, `@DataJpaTest`, `@JsonTest`) when a single
+  layer is enough — see [testing-slices-web.md](testing-slices-web.md),
+  [testing-slices-persistence.md](testing-slices-persistence.md). Reach for
+  `@SpringBootTest(classes = …)` + a slice when you want a few real layers wired together.
+- Assert through the layer's own entry point — a controller via `@WebMvcTest`+`MockMvcTester`,
+  a service directly, a GraphQL executor, etc. You do **not** need `@AutoConfigureMockMvc` at
+  this level unless you are deliberately exercising the HTTP layer (that belongs to the
+  request-level smoke test above or the e2e test below).
+- `@MockitoBean` and each distinct `@TestConfiguration` change the context cache key;
+  consolidate shared ones in a base class to preserve context reuse (see
+  [testing-strategy.md](testing-strategy.md)). Boot 4 / Spring Framework 7 improves
+  bean-override ergonomics here.
 
 ## Full REST API over a real port (end-to-end)
 

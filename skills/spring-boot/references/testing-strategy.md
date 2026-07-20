@@ -26,14 +26,16 @@ boot the framework.
 
 Roughly:
 
-- **~95% — sliced Spring tests.** `@SpringBootTest(classes = { … })` bootstraps *only* the
-  components you list (plus core DI), not the whole app — as fast as a unit test, but with
-  the real framework, annotations, and (via Testcontainers) real SQL. Mock the slow/costly
-  externals with a `@TestConfiguration` bean override or `@MockitoBean`; keep the rest
-  real. The built-in slice annotations (`@WebMvcTest`, `@DataJpaTest`, `@JsonTest`, …) are
-  the *same mechanism* with a preconfigured slice — convenient, but sometimes limiting, in
-  which case fall back to an explicit `classes = { … }` list (optionally with a custom
-  test-slice meta-annotation). See [testing-integration.md](testing-integration.md),
+- **~95% — sliced Spring tests.** `@SpringBootTest(classes = { … })` paired with a
+  test-slice annotation bootstraps *only* the components you list (plus the framework the
+  slice provides), not the whole app — with the real framework, annotations, and mappings.
+  Mock the slow/costly externals with a `@TestConfiguration` bean or `@MockitoBean`; keep
+  the rest real. With the repository mocked it runs at ~unit-test speed; with a real
+  database via a Testcontainers slice it pays a container start but exercises real SQL. The
+  built-in slice annotations (`@WebMvcTest`, `@DataJpaTest`, `@JsonTest`, …) are the *same
+  mechanism* with a preconfigured slice — convenient, but sometimes limiting, in which case
+  list `classes` explicitly and add a slice (a built-in one or a custom meta-annotation).
+  See [testing-integration.md](testing-integration.md),
   [testing-slices-web.md](testing-slices-web.md),
   [testing-slices-persistence.md](testing-slices-persistence.md).
 - **At least one smoke test**, plus at least one **request-level** end-to-end test.
