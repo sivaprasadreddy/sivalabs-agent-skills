@@ -94,14 +94,50 @@ DynamicPropertyRegistrar mailProperties(GenericContainer<?> mailhog) {
   hard-coded `5432`) — causes port clashes and flaky parallel runs; let Testcontainers
   map a random port and read it lazily.
 
+## When Docker isn't available
+
+Without Docker, a Testcontainers test **hard-fails** by default. Choose how to handle a
+Docker-less environment based on how the container is declared:
+
+- **`@Testcontainers` + `@Container` (static field):** set
+  `@Testcontainers(disabledWithoutDocker = true)` — JUnit then *skips* the class instead of
+  failing when Docker is absent.
+
+  ```java
+  @DataJpaTest
+  @Testcontainers(disabledWithoutDocker = true)
+  class OrderRepositoryTest { /* @Container static PostgreSQLContainer ... */ }
+  ```
+
+- **`@ServiceConnection` `@Bean` (Siva's / Bakker's style, via `@Import`):** there is **no**
+  `@Testcontainers` annotation to carry `disabledWithoutDocker`, and the container starts
+  when the context loads — so gate the class with a JUnit condition. `@EnabledIf` takes a
+  `Class#staticMethod` reference (it can't call the API inline), so point it at a helper:
+
+  ```java
+  static boolean dockerAvailable() {
+      return DockerClientFactory.instance().isDockerAvailable();
+  }
+
+  @EnabledIf("com.example.DockerCondition#dockerAvailable")
+  class OrderIntegrationTest extends BaseIT { /* ... */ }
+  ```
+
+  Simplest alternative: `assumeTrue(DockerClientFactory.instance().isDockerAvailable())` in
+  `@BeforeAll`. Or `@Tag("docker")` + exclude the tag in Docker-less runs.
+
+- **CI caveat — don't skip silently.** Skipping is a convenience for *local* dev without
+  Docker; a Testcontainers test that is silently skipped in **CI** is false confidence — the
+  same trap as passing on H2. Ensure CI has Docker or **Testcontainers Cloud** (Bakker's
+  approach for Docker-less Jenkins hosts) so these tests actually run — see
+  [testing-strategy.md](testing-strategy.md).
+
 ## 3.5.x vs 4.x
 
 Both `@ServiceConnection` (3.1+) and `DynamicPropertyRegistrar` (3.4+) exist in both
-lines. The difference is Testcontainers coordinates: **1.x** on Boot 3.5.x
-(`org.testcontainers:junit-jupiter`, `:postgresql`, `org.testcontainers.containers.*`)
-vs **2.x** on Boot 4.x (`testcontainers-junit-jupiter`, `testcontainers-postgresql`,
-`org.testcontainers.postgresql.PostgreSQLContainer`). See
-[spring-boot-rest-api-testing.md](spring-boot-rest-api-testing.md) for the 2.x note.
+lines. The difference is Testcontainers coordinates — **1.x** on Boot 3.5.x vs **2.x** on
+Boot 4.x; see [spring-boot-rest-api-testing.md](spring-boot-rest-api-testing.md) for the
+full artifact-id mapping.
 
 ---
 
