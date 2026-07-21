@@ -46,12 +46,21 @@ Build a modular monolith with Spring Modulith using [references/spring-modulith.
 
 If Thymeleaf is used for view templates, refer [references/thymeleaf.md](references/thymeleaf.md)
 
-## REST API Testing
+## Testing
 
-If building a REST API using Spring WebMVC, test Spring Boot REST APIs using [references/spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md).
+Write tests at complementary levels — unit, sliced Spring tests, and at least one end-to-end/smoke test; the levels are not either/or. Most framework-touching tests belong at the fast **sliced** level (`@SpringBootTest(classes = …)` or a slice annotation); keep full-context `@SpringBootTest` for a smoke test plus a request-level end-to-end. For why the levels are complementary and how to keep a large suite fast (context caching, one container for the suite), read [references/testing-strategy.md](references/testing-strategy.md).
 
-### Web App Controller Testing
-If building a web application using view rendering controllers, test the controller layer using [references/spring-boot-webapp-testing-with-mockmvctester.md](references/spring-boot-webapp-testing-with-mockmvctester.md).
+| What you're testing | Level | Reference |
+|---|---|---|
+| Business/domain logic, no framework | Unit (no Spring context) | [testing-unit-mocking.md](references/testing-unit-mocking.md) |
+| JPA / JDBC / JdbcClient / Spring Data JDBC / jOOQ queries | Persistence slice + Testcontainers | [testing-slices-persistence.md](references/testing-slices-persistence.md) |
+| Controller, JSON serialization, or a REST client | Web slice (`@WebMvcTest`/`@JsonTest`/`@RestClientTest`) | [testing-slices-web.md](references/testing-slices-web.md) |
+| A few components together, external HTTP (WireMock), or a startup/request-level smoke test | Sliced `@SpringBootTest(classes = …)` or smoke test | [testing-integration.md](references/testing-integration.md) |
+| Full REST API over a real port, full `BaseIT` suite (`RestTestClient`) | End-to-end | [spring-boot-rest-api-testing.md](references/spring-boot-rest-api-testing.md) |
+| A view-rendering controller (`MockMvcTester`) | Web slice | [spring-boot-webapp-testing-with-mockmvctester.md](references/spring-boot-webapp-testing-with-mockmvctester.md) |
+| Wiring a container (`@ServiceConnection` / dynamic properties) | — | [testcontainers-wiring.md](references/testcontainers-wiring.md) |
+
+All persistence and integration tests use **Testcontainers with a real database** (never in-memory H2); see [references/testcontainers-wiring.md](references/testcontainers-wiring.md) for `@ServiceConnection` vs dynamic-property wiring.
 
 ### Write ArchUnit Tests
 To write tests for testing the architecture using ArchUnit, refer [references/archunit.md](references/archunit.md)

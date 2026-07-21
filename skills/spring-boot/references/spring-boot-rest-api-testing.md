@@ -5,6 +5,10 @@
 - [BaseIT](#baseitjava)
 - [Sample controller test](#sample-restcontroller-test)
 
+> This is the end-to-end (real-port) layer. For choosing the right test level and keeping the suite fast, see [testing-strategy.md](testing-strategy.md); for stubbing external HTTP called during these tests, see [testing-integration.md](testing-integration.md).
+>
+> **3.5.x vs 4.x:** the REST test client module differs by version — see [testing-integration.md](testing-integration.md); the JSON mapper package differs — see [testing-slices-web.md](testing-slices-web.md); Testcontainers coordinates differ — see [testcontainers-wiring.md](testcontainers-wiring.md).
+
 ## Key principles
 
 Follow these principles when testing Spring Boot Web MVC REST APIs:
