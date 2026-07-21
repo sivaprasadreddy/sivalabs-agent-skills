@@ -130,7 +130,7 @@ public class PostgresTestContainerConfig {
     @Bean
     @ServiceConnection                                   // wires spring.datasource.* — no manual props
     PostgreSQLContainer<?> postgres() {
-        return new PostgreSQLContainer<>("postgres:16-alpine")   // pin the tag, never untagged/latest
+        return new PostgreSQLContainer<>("postgres:18-alpine")   // pin the tag, never untagged/latest
                 .withInitScript("shows.sql");
     }
 }
@@ -150,6 +150,11 @@ Notes:
   consolidate shared ones in a base class to preserve context reuse (see
   [testing-strategy.md](testing-strategy.md)). Boot 4 / Spring Framework 7 improves
   bean-override ergonomics here.
+- If the suite already imports the shared `TestcontainersConfig` (from
+  [spring-boot-rest-api-testing.md](spring-boot-rest-api-testing.md)) for the e2e layer,
+  reuse it here instead of `PostgresTestContainerConfig` — two different container
+  configs in the same suite means two Postgres containers and two context-cache
+  families.
 
 ## Full REST API over a real port (end-to-end)
 
@@ -209,7 +214,8 @@ class CheckoutIntegrationTest {
 - **REST test client**: on 4.x prefer `RestTestClient` (`@AutoConfigureRestTestClient`) or
   `TestRestTemplate` (`@AutoConfigureTestRestTemplate` — required on 4.x); both live in the
   new `spring-boot-resttestclient` module. On 3.5.x use `WebTestClient`/`TestRestTemplate`.
-- Testcontainers coordinates: 1.x (3.5.x) vs 2.x (4.x).
+- Testcontainers coordinates: 1.x (3.5.x) vs 2.x (4.x) — see
+  [testcontainers-wiring.md](testcontainers-wiring.md).
 - **Test-autoconfigure annotations moved packages in Boot 4** (modular restructuring), so
   the imports in a custom slice like `@EnableDatabaseTest` differ by version — let your IDE
   resolve them. For example: `AutoConfigureDataJpa` is `org.springframework.boot.data.jpa.test.autoconfigure`

@@ -107,9 +107,9 @@ Mockito generates classes at runtime, which the closed-world native image forbid
 - **For a native-safe bean replacement, prefer `@TestBean`** (a static factory method
   returning a real or hand-written stub) — the non-Mockito bean-override, and general Bean
   Override support, work in native image.
-- This is another reason to lean on **real-component / Testcontainers** tests (the sliced
-  Variant B and integration tests, which use no mocks): those run natively and are what
-  actually exercise native compatibility. See
+- This is another reason to lean on **real-component / Testcontainers** tests — the
+  real-database sliced tests and integration tests, which use no mocks — those run
+  natively and are what actually exercise native compatibility. See
   [testing-integration.md](testing-integration.md).
 
 Source: [Testing GraalVM Native Images](https://docs.spring.io/spring-boot/how-to/native-image/testing-native-applications.html).
