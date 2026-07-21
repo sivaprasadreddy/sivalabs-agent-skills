@@ -163,6 +163,15 @@ For a closed-box test that drives the app only through HTTP over a real port, us
 [spring-boot-rest-api-testing.md](spring-boot-rest-api-testing.md) has the full
 `BaseIT` + `RestTestClient` pattern — keep this layer thin.
 
+**Boot 4 — one client across levels.** `RestTestClient` (Spring Framework 7) unifies
+MockMvc and WebTestClient behind a single fluent API, with a bind mode for each test level:
+`bindToController(...)` (no context, mock collaborators by hand), `bindTo(MockMvc)` (over an
+MVC slice), `bindToApplicationContext(...)` (real context), and `bindToServer()` (real
+port). So the same client can span the sliced-to-e2e range rather than switching tools per
+level — a natural fit for the layered model in [testing-strategy.md](testing-strategy.md).
+On 3.5.x there is no `RestTestClient`; use `MockMvcTester`/`WebTestClient`/`TestRestTemplate`.
+*(Credit: [Dan Vega — Spring Framework 7 RestTestClient](https://www.danvega.dev/blog/spring-framework-7-rest-test-client); bind-mode names verified against the Spring Framework 7 `RestTestClient` source.)*
+
 ## External HTTP: built-in first, WireMock when you need a port
 
 Full and sliced tests still call whatever external services the code depends on, so stub
