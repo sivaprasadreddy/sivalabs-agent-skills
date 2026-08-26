@@ -1,0 +1,5 @@
+interface:
+  display_name: "Progen: Spring Boot App Generator"
+  short_description: "Scaffold a Spring Boot project with sensible defaults"
+policy:
+  allow_implicit_invocation: false

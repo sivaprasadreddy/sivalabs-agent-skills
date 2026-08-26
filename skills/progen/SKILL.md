@@ -1,6 +1,7 @@
 ---
 name: progen
 description: Use when the user wants to create/generate/scaffold a new Spring Boot project (Maven or Gradle, REST API / Web App / Spring Boot + Angular full stack). Derives progen CLI inputs from the user's plain-English project description, asks for any missing mandatory info, ensures the progen binary is available, and runs it to generate the project. If the user asks for features progen doesn't support natively, generate the base project first, then add those features on top of the generated code.
+disable-model-invocation: true
 ---
 
 # progen: Spring Boot Project Generator
