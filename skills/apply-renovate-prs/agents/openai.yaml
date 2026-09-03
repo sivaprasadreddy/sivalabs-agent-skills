@@ -1,0 +1,5 @@
+interface:
+  display_name: "Apply all PR changes created by Renovate bot locally"
+  short_description: "Apply all PR changes created by Renovate bot locally in one go"
+policy:
+  allow_implicit_invocation: false

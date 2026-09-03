@@ -7,6 +7,7 @@ A collection of skills/guidelines for building applications using AI Agents.
 - [Spring Modulith Verifier](skills/spring-modulith-verifier)
 - [jSpecify](skills/jspecify)
 - [Java Code Review](skills/java-code-review)
+- [Apply Renovate PRs](skills/apply-renovate-prs)
 
 ## Usage
 
