@@ -3,6 +3,7 @@
 A collection of skills/guidelines for building applications using AI Agents.
 
 ## Skills
+- [Progen](skills/progen)
 - [Spring Boot](skills/spring-boot)
 - [Spring Modulith Verifier](skills/spring-modulith-verifier)
 - [jSpecify](skills/jspecify)
