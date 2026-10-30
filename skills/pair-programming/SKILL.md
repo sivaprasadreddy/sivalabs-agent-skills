@@ -1,5 +1,5 @@
 ---
-name: Pair Programming
+name: pair-programming
 description: > 
   Collaboratively design, implement, review, and refine software features with a human developer using an iterative pair programming workflow. 
   Prioritize understanding, explicit approval, small reviewable changes, and synchronized specifications.
